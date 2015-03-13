@@ -1,2 +1,2 @@
-# myaegean.github.com
+# MyAegean.github.io
 test pages repo
