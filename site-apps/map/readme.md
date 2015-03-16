@@ -13,7 +13,7 @@ This project serves as a quick view on the 6 university units on the Aegean Arch
 
 <p><strong>Fork it!</strong> We encourage the optimization and development of this simple idea by expanding its possibilites and serving as a point of reference and providing fruitful information regarding the university units. Please feel free to contribute here and support it further!</p>
 
-<p>We will support the expansion of the project and update it on: <strong><a href="http://my.aegean.gr/map/">my.aegean.gr/map/</a></strong> </p>
+<p>We will support the expansion of the project and update it on: <strong><a href="http://my.aegean.gr/map/" target="_blank">my.aegean.gr/map/</a></strong> </p>
 
 <p><img src="http://my.aegean.gr/map/AegeanUniversity-GR-MapView.png" alt="Map of University of the Aegean" width="659" height="452"></p>
 
