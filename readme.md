@@ -28,6 +28,7 @@ This project serves as a quick view on the 6 university units on the Aegean Arch
 
 
 
+
 ## Support
 
 [![Liberapay](https://libreops.cc/static/img/liberapay.svg)](https://liberapay.com/MyAegean/donate)
