@@ -1,0 +1,332 @@
+{
+  "_meta": {
+    "title": "Χάρτης πανεπιστημιακών μονάδων Πανεπιστημίου Αιγαίου — my.aegean.gr/map/",
+    "snapshot": "ΑΠΟΤΥΠΩΣΗ ΕΠΟΧΗΣ. Τα ονόματα τμημάτων, τα links και οι συντεταγμένες προέρχονται αυτούσια από το /map/index.html του αρχείου (mtime 2021-05-28). ΔΕΝ έχουν ενημερωθεί στη σημερινή δομή σχολών/τμημάτων του aegean.gr.",
+    "source_file": "webroot_copy/map/index.html (Google Maps API v2, 65.438 bytes, 2021-05-28)",
+    "rebuilt": "2026-07-31 — LeafletJS 1.9.4 + CartoDB Positron, κατά το πρότυπο /radio/map/embed/",
+    "unit_count": 18,
+    "maintenance": "Δες README.md. Ένα αρχείο = μία πηγή αλήθειας: επεξεργάσου ΜΟΝΟ αυτό το JSON και μετά τρέξε build-datajs.py."
+  },
+  "map": {
+    "center": [
+      38.12591462924157,
+      25.718994140625
+    ],
+    "zoom": 6,
+    "center_note": "Ίδιο κέντρο με τον παλιό χάρτη (GLatLng του index.html) και με το /radio/map/embed/.",
+    "fit_padding": [
+      60,
+      60
+    ]
+  },
+  "units": [
+    {
+      "id": "lesvos",
+      "name": "ΛΕΣΒΟΣ",
+      "kind": "island",
+      "coords": [
+        39.10135833518615,
+        26.559877395629883
+      ],
+      "zoom_on_click": 10,
+      "icon": "img/icon-lesvos.png",
+      "photo": "img/lesvos.jpg",
+      "photo_original": "http://my.aegean.gr/gallery/93954-2/SAM_2589.JPG",
+      "photo_status": "OK — αντικατάσταση που επέλεξε ο Yan (SAM_2589, Places/Greece/Lesvos/Mytilene), κατέβηκε από τον live server 1/8/2026",
+      "photo_focus": "50% 30%",
+      "departments": [
+        {
+          "name": "Κοινωνικής Ανθρωπολογίας & Ιστορίας",
+          "url": "https://www.aegean.gr/departments/τμήμα-κοινωνικής-ανθρωπολογίας-και-ιστορίας"
+        },
+        {
+          "name": "Γεωγραφίας",
+          "url": "https://www.aegean.gr/departments/τμήμα-γεωγραφίας"
+        },
+        {
+          "name": "Κοινωνιολογίας",
+          "url": "https://www.aegean.gr/departments/τμήμα-κοινωνιολογίας"
+        },
+        {
+          "name": "Πολιτισμικής Τεχνολογίας & Επικοινωνίας",
+          "url": "https://www.aegean.gr/departments/τμήμα-πολιτισμικής-τεχνολογίας-και-επικοινωνίας"
+        },
+        {
+          "name": "Περιβάλλοντος",
+          "url": "https://www.aegean.gr/departments/τμήμα-περιβάλλοντος"
+        },
+        {
+          "name": "Ωκεανογραφίας και Θαλασσίων Βιοεπιστημών",
+          "url": "https://www.aegean.gr/departments/τμήμα-ωκεανογραφίας-και-θαλασσίων-βιοεπιστημών"
+        }
+      ],
+      "links": [
+        {
+          "label": "φωτογραφίες",
+          "url": "//my.aegean.gr/gallery/Places/Greece/Lesvos/",
+          "icon": "photos"
+        },
+        {
+          "label": "νέα φοιτ. ομάδων",
+          "url": "//my.aegean.gr/web/forum-lesvosteams.html",
+          "icon": "teams"
+        },
+        {
+          "label": "ακαδημαϊκά νέα",
+          "url": "//my.aegean.gr/web/forum-lesvosuni.html",
+          "icon": "uni"
+        }
+      ],
+      "photo_height": 350,
+      "photo_height_note": "ύψος της ζώνης φωτογραφίας σε px — αυτούσιο από το παλιό popup"
+    },
+    {
+      "id": "chios",
+      "name": "ΧΙΟΣ",
+      "kind": "island",
+      "coords": [
+        38.37167433467726,
+        26.138277053833008
+      ],
+      "zoom_on_click": 10,
+      "icon": "img/icon-chios.png",
+      "photo": "img/chios.jpg",
+      "photo_original": "http://my.aegean.gr/gallery/3514-2/Chios-university.jpg",
+      "photo_status": "OK — κατέβηκε από τον live server 31/7/2026",
+      "photo_focus": "50% 40%",
+      "departments": [
+        {
+          "name": "Μηχανικών Οικονομίας & Διοίκησης",
+          "url": "https://www.aegean.gr/departments/τμήμα-μηχανικών-οικονομίας-και-διοίκησης"
+        },
+        {
+          "name": "Διοίκησης Επιχειρήσεων",
+          "url": "https://www.aegean.gr/departments/τμήμα-διοίκησης-επιχειρήσεων"
+        },
+        {
+          "name": "Ναυτιλίας & Επιχειρηματικών Υπηρεσιών",
+          "url": "https://www.aegean.gr/departments/τμήμα-ναυτιλίας-και-επιχειρηματικών-υπηρεσιών"
+        },
+        {
+          "name": "Οικονομικής & Διοίκησης Τουρισμού",
+          "url": "https://www.aegean.gr/departments/τμήμα-οικονομικής-και-διοίκησης-τουρισμού"
+        }
+      ],
+      "links": [
+        {
+          "label": "φωτογραφίες",
+          "url": "//my.aegean.gr/gallery/Places/Greece/Chios/",
+          "icon": "photos"
+        },
+        {
+          "label": "νέα φοιτ. ομάδων",
+          "url": "//my.aegean.gr/web/forum-chiosteams.html",
+          "icon": "teams"
+        },
+        {
+          "label": "ακαδημαϊκά νέα",
+          "url": "//my.aegean.gr/web/forum-chiosuni.html",
+          "icon": "uni"
+        }
+      ],
+      "photo_height": 250,
+      "photo_height_note": "ύψος της ζώνης φωτογραφίας σε px — αυτούσιο από το παλιό popup"
+    },
+    {
+      "id": "samos",
+      "name": "ΣΑΜΟΣ",
+      "kind": "island",
+      "coords": [
+        37.80062895933659,
+        26.706905364990234
+      ],
+      "zoom_on_click": 10,
+      "icon": "img/icon-samos.png",
+      "photo": "img/samos.jpg",
+      "photo_original": "http://my.aegean.gr/gallery/114730-2/IMG_20170815_180554_134.jpg",
+      "photo_status": "OK — κατέβηκε από τον live server 31/7/2026",
+      "photo_focus": "50% 50%",
+      "departments": [
+        {
+          "name": "Μηχανικών Πληροφοριακών & Επικοινωνιακών Συστημάτων",
+          "url": "https://www.aegean.gr/departments/τμήμα-μηχανικών-πληροφοριακών-και-επικοινωνιακών-συστημάτων"
+        },
+        {
+          "name": "Μαθηματικών",
+          "url": "https://www.aegean.gr/departments/τμήμα-μαθηματικών"
+        },
+        {
+          "name": "Στατιστικής & Αναλογιστικών - Χρηματοοικονομικών Μαθηματικών",
+          "url": "https://www.aegean.gr/departments/τμήμα-στατιστικής-και-αναλογιστικών-–-χρηματοοικονομικών-μαθηματικών"
+        }
+      ],
+      "links": [
+        {
+          "label": "φωτογραφίες",
+          "url": "//my.aegean.gr/gallery/Places/Greece/Samos/",
+          "icon": "photos"
+        },
+        {
+          "label": "νέα φοιτ. ομάδων",
+          "url": "//my.aegean.gr/web/forum-samosteams.html",
+          "icon": "teams"
+        },
+        {
+          "label": "ακαδημαϊκά νέα",
+          "url": "//my.aegean.gr/web/forum-samosuni.html",
+          "icon": "uni"
+        }
+      ],
+      "photo_height": 250,
+      "photo_height_note": "ύψος της ζώνης φωτογραφίας σε px — αυτούσιο από το παλιό popup"
+    },
+    {
+      "id": "syros",
+      "name": "ΣΥΡΟΣ",
+      "kind": "island",
+      "coords": [
+        37.445408719009166,
+        24.942140579223633
+      ],
+      "zoom_on_click": 10,
+      "icon": "img/icon-syros.png",
+      "photo": "img/syros.jpg",
+      "photo_original": "http://my.aegean.gr/gallery/113656-2/Syros_DPSDE_building_University_Aegean_aristeiaacadem_f2_1280hi.jpg",
+      "photo_status": "OK — κατέβηκε από τον live server 31/7/2026",
+      "photo_focus": "50% 30%",
+      "departments": [
+        {
+          "name": "Μηχανικών Σχεδίασης Προϊόντων και Συστημάτων",
+          "url": "https://www.aegean.gr/departments/τμήμα-μηχανικών-σχεδίασης-προϊόντων-και-συστημάτων"
+        }
+      ],
+      "links": [
+        {
+          "label": "φωτογραφίες",
+          "url": "//my.aegean.gr/gallery/Places/Greece/Syros/",
+          "icon": "photos"
+        },
+        {
+          "label": "νέα φοιτ. ομάδων",
+          "url": "//my.aegean.gr/web/forum-syrosteams.html",
+          "icon": "teams"
+        },
+        {
+          "label": "ακαδημαϊκά νέα",
+          "url": "//my.aegean.gr/web/forum-syrosuni.html",
+          "icon": "uni"
+        }
+      ],
+      "photo_height": 150,
+      "photo_height_note": "ύψος της ζώνης φωτογραφίας σε px — αυτούσιο από το παλιό popup"
+    },
+    {
+      "id": "rhodes",
+      "name": "ΡΟΔΟΣ",
+      "kind": "island",
+      "coords": [
+        36.445589751779174,
+        28.22216033935547
+      ],
+      "zoom_on_click": 10,
+      "icon": "img/icon-rhodes.png",
+      "photo": "img/rhodes.jpg",
+      "photo_original": "http://my.aegean.gr/gallery/114559-2/20170204_151413.jpg",
+      "photo_status": "OK — κατέβηκε από τον live server 31/7/2026",
+      "photo_focus": "50% 35%",
+      "departments": [
+        {
+          "name": "Παιδαγωγικό Τμήμα Δημοτικής Εκπαίδευσης",
+          "url": "https://www.aegean.gr/departments/παιδαγωγικό-τμήμα-δημοτικής-εκπαίδευσης"
+        },
+        {
+          "name": "Επιστημών Προσχολικής Αγωγής & Εκπαιδευτικού Σχεδιασμού",
+          "url": "https://www.aegean.gr/departments/τμήμα-επιστημών-της-προσχολικής-αγωγής-και-του-εκπαιδευτικού-σχεδιασμού"
+        },
+        {
+          "name": "Μεσογειακών Σπουδών: Αρχαιολογία, Γλωσσολογία, Διεθνείς Σχέσεις",
+          "url": "https://www.aegean.gr/departments/τμήμα-μεσογειακών-σπουδών-αρχαιολογία-γλωσσολογία-διεθνείς-σχέσεις"
+        }
+      ],
+      "links": [
+        {
+          "label": "φωτογραφίες",
+          "url": "//my.aegean.gr/gallery/Places/Greece/Rhodes/",
+          "icon": "photos"
+        },
+        {
+          "label": "νέα φοιτ. ομάδων",
+          "url": "//my.aegean.gr/web/forum-rhodesteams.html",
+          "icon": "teams"
+        },
+        {
+          "label": "ακαδημαϊκά νέα",
+          "url": "//my.aegean.gr/web/forum-rhodesuni.html",
+          "icon": "uni"
+        }
+      ],
+      "photo_height": 200,
+      "photo_height_note": "ύψος της ζώνης φωτογραφίας σε px — αυτούσιο από το παλιό popup"
+    },
+    {
+      "id": "limnos",
+      "name": "ΛΗΜΝΟΣ",
+      "kind": "island",
+      "coords": [
+        39.923351,
+        25.242419
+      ],
+      "zoom_on_click": 10,
+      "icon": "img/icon-limnos.png",
+      "photo": "img/limnos.jpg",
+      "photo_original": "http://my.aegean.gr/gallery/129310-2/Limnos_FNS_University_of_the_Aegean_-_building.jpg",
+      "photo_status": "OK — κατέβηκε από τον live server 31/7/2026",
+      "photo_focus": "50% 62%",
+      "departments": [
+        {
+          "name": "Επιστήμης Τροφίμων και Διατροφής",
+          "url": "https://www.aegean.gr/departments/τμήμα-επιστήμης-τροφίμων-και-διατροφής"
+        }
+      ],
+      "links": [
+        {
+          "label": "φωτογραφίες",
+          "url": "//my.aegean.gr/gallery/Places/Greece/Limnos/",
+          "icon": "photos"
+        },
+        {
+          "label": "νέα φοιτ. ομάδων",
+          "url": "//my.aegean.gr/web/forum-limnosteams.html",
+          "icon": "teams"
+        },
+        {
+          "label": "ακαδημαϊκά νέα",
+          "url": "//my.aegean.gr/web/forum-limnosuni.html",
+          "icon": "uni"
+        }
+      ],
+      "photo_height": 150,
+      "photo_height_note": "ύψος της ζώνης φωτογραφίας σε px — αυτούσιο από το παλιό popup"
+    },
+    {
+      "id": "athens",
+      "name": "ΑΘΗΝΑ",
+      "kind": "office",
+      "coords": [
+        37.98672642611342,
+        23.742506504058838
+      ],
+      "zoom_on_click": 15,
+      "info": {
+        "title": "Πανεπιστήμιο Αιγαίου - ΑΘΗΝΑ",
+        "lines": [
+          "Γραφεία - Τεχνική Υπηρεσία - Επιτροπή Ερευνών",
+          "Βουλγαροκτόνου 30, ΑΘΗΝΑ, 114 72",
+          "Τηλ.: 210 6492000, Fax: 210 6492199"
+        ]
+      },
+      "departments": [],
+      "links": []
+    }
+  ]
+}

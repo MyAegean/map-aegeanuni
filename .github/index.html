@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<!--
+#####################################################
+# Concept, Development, Design,                     #
+# Organizing stuff by group of students of the      #
+# University of the Aegean, Greece.                 #
+# 'MyAegean' student team, founded on spring        #
+# 2003, originally initiated in Syros island,       #
+# Cyclades, Greece.                                 #
+# This message is placed for future references.     #
+# Thank you all for your continuous passion,        #
+# support and hard work! We feel indebted to        #
+# all people involved on this project!              #
+#####################################################
+
+ /map/ — 3η γενεά υλοποίησης, 2026.
+ Γενεαλογία: Google Maps API v2 (2010) -> v2 loader με v3 key (2017-2021, νεκρό)
+              -> LeafletJS + CartoDB Positron (2026, αυτό το αρχείο).
+ Σταθερό URL μεταξύ γενεών: /map/. Η προηγούμενη εκδοχή -> /map/_old/.
+ Μηδενικές εξαρτήσεις: κανένα API key, κανένας λογαριασμός, καμία server-side εκτέλεση.
+ Δεδομένα: map-data.json (χειροκίνητα συντηρήσιμο) — βλ. README.md
+-->
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Χάρτης του Πανεπιστημίου Αιγαίου - Σχολές και Τμήματα | MY.aegean.gr Community</title>
+<meta name="description" content="Χάρτης των πανεπιστημιακών μονάδων του Πανεπιστημίου Αιγαίου - Σχολές και Τμήματα ανά νησί. Το myAegean είναι μια πρωτοβουλία φοιτητών του Πανεπιστημίου Αιγαίου. Δρα ως ένας χώρος άμεσης, συμμετοχικής και ποιοτικής επικοινωνίας και ενημέρωσης, χωρίς γεωγραφικούς περιορισμούς.">
+<meta name="dc.title" content="Χάρτης του Πανεπιστημίου Αιγαίου - Σχολές και Τμήματα | MY.aegean.gr Community">
+<meta property="og:title" content="Χάρτης του Πανεπιστημίου Αιγαίου - Σχολές και Τμήματα | MY.aegean.gr Community" />
+<meta property="og:description" content="Χάρτης των πανεπιστημιακών μονάδων του Πανεπιστημίου Αιγαίου - Σχολές και Τμήματα ανά νησί." />
+<meta property="og:site_name" content="My.Aegean.gr" />
+<meta property="og:locale" content="el_GR" />
+<meta name="twitter:title" content="Χάρτης του Πανεπιστημίου Αιγαίου - Σχολές και Τμήματα | MY.aegean.gr Community" />
+<meta name="twitter:site" content="@MyAegean">
+<link rel="publisher" href="http://my.aegean.gr" title="MyAegean student intitiative" />
+<link rel="canonical" href="http://my.aegean.gr/map/">
+
+<!-- Leaflet CSS — cdnjs (Cloudflare edge, SRI verified) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+      integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+html, body, #map-canvas { margin: 0; padding: 0; height: 100%; }
+body { background: #fff; }
+
+/* ---- κουμπιά: αυτούσιο το .altbutinfo .button της πύλης (ίδιο με /radio/map/embed/) ---- */
+.altbutinfo .button { display: inline-block; background: #eeeeee; background: linear-gradient(to bottom, #eeeeee 0%,#eeeeee 100%); border: 1px solid #a1a1a1; padding: 0 2px; margin: 2px; font: bold 1em/2em Arial, Helvetica; text-decoration: none; color: #333; text-shadow: 0 1px 0 rgba(255,255,255,.8); border-radius: 2px; box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3); }
+.altbutinfo .button:hover { background: #ffffff; background: linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%); }
+.altbutinfo .button:active { box-shadow: 0 0 4px 2px rgba(0,0,0,.3) inset; position: relative; top: 1px; }
+.altbutinfo .button:focus { outline: 0; background: #fafafa; }
+
+/* ---- μπάρα τίτλου (αυτούσια η .map-content του παλιού /map/) ---- */
+.map-content { z-index: 1200; position: fixed; top: 0; left: 0; width: 100%; background: #224D6F; color: #FFF; padding: 6px; border-radius: 2px; margin: 0; box-sizing: border-box; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+.map-content h1 { font: bold 140%/1.2 'HelveticaNeue-Light','Helvetica Neue',Helvetica,Arial,sans-serif; margin: 6px 0 5px 15px; float: left; color: #fff; }
+.map-content .mylogo { float: left; margin: 8px 0 0 12px; }
+.map-content .mylogo img { display: block; border: 0; }
+.map-content:after { content: ""; display: block; clear: both; }
+
+/* ---- control bar (ίδιο pattern με το StudentRadios__map_control) ---- */
+#AegeanUnits__map_control { position: fixed; right: 0; margin-right: 10px; margin-left: auto; overflow: hidden; width: 60%; margin-top: 8px; padding: 0; height: 64px; font-size: 12px; line-height: 130%; z-index: 2001002; display: block; text-align: right; }
+
+/* ---- ο χάρτης κάτω από τη μπάρα ---- */
+#map-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding-top: 54px; box-sizing: border-box; background: #fff; }
+/* τα controls του Leaflet να μην περνούν κάτω από τη σταθερή μπάρα / το control bar */
+.leaflet-top .leaflet-control { margin-top: 66px; }
+
+/* Leaflet 1.8+ injects a national flag SVG into its attribution link.
+   Hidden here to keep the map politically neutral. The Leaflet, OSM and
+   CARTO attribution TEXT and links are untouched, so the licence terms
+   are still met - only the flag graphic is suppressed. */
+.leaflet-attribution-flag { display: none !important; }
+
+/* ---- bubbles ---- */
+.unit-label { background: transparent; border: 0; box-shadow: none; padding: 0; font: bold 11px/1.1 'HelveticaNeue-Light','Helvetica Neue',Helvetica,Arial,sans-serif; color: #14314a; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; white-space: nowrap; }
+.unit-label:before { display: none; }
+.unit-label b { display: block; font-size: 12px; letter-spacing: .5px; }
+.unit-label span { font-weight: normal; color: #4a6070; }
+
+/* ---- popups ---- */
+.leaflet-popup-content-wrapper { border-radius: 3px; padding: 0; }
+.leaflet-popup-content { margin: 0; width: 300px !important; font-family: 'HelveticaNeue-Light','Helvetica Neue',Helvetica,Arial,sans-serif; }
+.mypop h3 { margin: 0; padding: 8px 10px; font-size: 15px; letter-spacing: 1px; color: #fff; background: #224D6F; }
+.mypop h3 img { float: right; height: 26px; width: auto; margin: -3px 20px 0 6px; }  /* 20px δεξιά = χώρος για το × */
+.mypop .shots { background-color: #d9e2ea; background-size: cover; background-repeat: no-repeat; }
+.mypop .shots.nophoto { background: #2f5573; min-height: 0 !important; }
+.leaflet-popup-close-button { color: #cfe0ee !important; font-size: 18px !important; padding: 6px 8px 0 0 !important; }
+.leaflet-popup-close-button:hover { color: #fff !important; }
+.mypop h4 { margin: 0; padding: 9px 8px; font-size: 12px; font-weight: normal; line-height: 1.25; background: rgba(255,255,255,.82); border-bottom: 1px solid rgba(255,255,255,.5); }
+.mypop h4 a { color: #14314a; text-decoration: none; }
+.mypop h4 a:hover { text-decoration: underline; }
+.mypop .shots.nophoto h4 { background: rgba(255,255,255,.9); }
+.mypop .addr { padding: 10px; font-size: 12px; line-height: 1.5; color: #22374a; }
+.mypop .addr b { display: block; margin-bottom: 6px; font-size: 13px; }
+.mypop .acts { border-top: 2px solid lightgray; margin: 0; padding: 8px 6px 6px 6px; text-align: center; }
+.mypop .acts .button { font-size: 11px; }
+.mypop .flag { padding: 6px 10px; font-size: 10px; color: #7a6a2a; background: #fdf6dc; border-top: 1px solid #ecdfae; }
+.mypop svg { display: inline-block; margin-left: 4px; margin-right: 4px; vertical-align: middle; fill: currentColor; }
+
+@media (max-width: 620px) {
+  .map-content .mylogo { display: none; }
+  .map-content h1 { font-size: 100%; margin: 7px 0 5px 10px; }
+  #AegeanUnits__map_control { width: auto; right: 6px; margin-right: 4px; margin-top: 5px; height: auto; }
+  #AegeanUnits__map_control .button { font-size: 11px; padding: 0 6px; }
+  #AegeanUnits__map_control .btxt { display: none; }   /* μόνο το εικονίδιο — αφήνει χώρο στον τίτλο */
+  .leaflet-top .leaflet-control { margin-top: 58px; }
+  .leaflet-popup-content { width: 250px !important; }
+}
+</style>
+
+<!-- Leaflet JS — cdnjs (Cloudflare edge, SRI verified) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+        integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+
+<div class="map-content">
+  <a class="mylogo" href="//my.aegean.gr" title="MY.aegean.gr Community"><img src="img/myaegean-logo.png" alt="MY.aegean.gr" width="76" height="19"></a>
+  <h1>Χάρτης πανεπιστημιακών μονάδων</h1>
+</div>
+
+<div id="AegeanUnits__map_control" class="altbutinfo">
+  <!-- title/aria-label: σε <620px το .btxt κρύβεται και μένει μόνο το εικονίδιο,
+       οπότε χωρίς αυτά το κουμπί δεν έχει καθόλου προσβάσιμο όνομα. -->
+  <button type="button" onclick="AegeanUnits__mappieinitialize();" title="Επαναφορά χάρτη" aria-label="Επαναφορά χάρτη" class="button" style="cursor: pointer;">
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 24 28" style="display:inline-block;margin-left:4px;margin-right:4px;vertical-align:middle;"><path d="M23.609 16.5c0 0.031 0 0.078-0.016 0.109-1.328 5.531-5.891 9.391-11.656 9.391-3.047 0-6-1.203-8.219-3.313l-2.016 2.016c-0.187 0.187-0.438 0.297-0.703 0.297-0.547 0-1-0.453-1-1v-7c0-0.547 0.453-1 1-1h7c0.547 0 1 0.453 1 1 0 0.266-0.109 0.516-0.297 0.703l-2.141 2.141c1.469 1.375 3.422 2.156 5.437 2.156 2.781 0 5.359-1.437 6.813-3.813 0.375-0.609 0.562-1.203 0.828-1.828 0.078-0.219 0.234-0.359 0.469-0.359h3c0.281 0 0.5 0.234 0.5 0.5zM24 4v7c0 0.547-0.453 1-1 1h-7c-0.547 0-1-0.453-1-1 0-0.266 0.109-0.516 0.297-0.703l2.156-2.156c-1.484-1.375-3.437-2.141-5.453-2.141-2.781 0-5.359 1.437-6.813 3.813-0.375 0.609-0.562 1.203-0.828 1.828-0.078 0.219-0.234 0.359-0.469 0.359h-3.109c-0.281 0-0.5-0.234-0.5-0.5v-0.109c1.344-5.547 5.953-9.391 11.719-9.391 3.063 0 6.047 1.219 8.266 3.313l2.031-2.016c0.187-0.187 0.438-0.297 0.703-0.297 0.547 0 1 0.453 1 1z"></path></svg><span class="btxt">Επαναφορά χάρτη&nbsp;</span></button>
+</div>
+
+<div id="map-canvas"></div>
+
+<script>
+/* ------------------------------------------------------------------ *
+ *  Εικονίδια — αυτούσια τα SVG paths του παλιού /map/index.html       *
+ * ------------------------------------------------------------------ */
+var ICONS = {
+  dept:   ['0 0 30 28','M15 0l15 6v2h-2c0 0.547-0.484 1-1.078 1h-23.844c-0.594 0-1.078-0.453-1.078-1h-2v-2zM4 10h4v12h2v-12h4v12h2v-12h4v12h2v-12h4v12h0.922c0.594 0 1.078 0.453 1.078 1v1h-26v-1c0-0.547 0.484-1 1.078-1h0.922v-12zM28.922 25c0.594 0 1.078 0.453 1.078 1v2h-30v-2c0-0.547 0.484-1 1.078-1h27.844z'],
+  photos: ['0 0 30 28','M10 9c0 1.656-1.344 3-3 3s-3-1.344-3-3 1.344-3 3-3 3 1.344 3 3zM26 15v7h-22v-3l5-5 2.5 2.5 8-8zM27.5 4h-25c-0.266 0-0.5 0.234-0.5 0.5v19c0 0.266 0.234 0.5 0.5 0.5h25c0.266 0 0.5-0.234 0.5-0.5v-19c0-0.266-0.234-0.5-0.5-0.5zM30 4.5v19c0 1.375-1.125 2.5-2.5 2.5h-25c-1.375 0-2.5-1.125-2.5-2.5v-19c0-1.375 1.125-2.5 2.5-2.5h25c1.375 0 2.5 1.125 2.5 2.5z'],
+  teams:  ['0 0 30 28','M9.266 14c-1.625 0.047-3.094 0.75-4.141 2h-2.094c-1.563 0-3.031-0.75-3.031-2.484 0-1.266-0.047-5.516 1.937-5.516 0.328 0 1.953 1.328 4.062 1.328 0.719 0 1.406-0.125 2.078-0.359-0.047 0.344-0.078 0.688-0.078 1.031 0 1.422 0.453 2.828 1.266 4zM26 23.953c0 2.531-1.672 4.047-4.172 4.047h-13.656c-2.5 0-4.172-1.516-4.172-4.047 0-3.531 0.828-8.953 5.406-8.953 0.531 0 2.469 2.172 5.594 2.172s5.063-2.172 5.594-2.172c4.578 0 5.406 5.422 5.406 8.953zM10 4c0 2.203-1.797 4-4 4s-4-1.797-4-4 1.797-4 4-4 4 1.797 4 4zM21 10c0 3.313-2.688 6-6 6s-6-2.688-6-6 2.688-6 6-6 6 2.688 6 6zM30 13.516c0 1.734-1.469 2.484-3.031 2.484h-2.094c-1.047-1.25-2.516-1.953-4.141-2 0.812-1.172 1.266-2.578 1.266-4 0-0.344-0.031-0.688-0.078-1.031 0.672 0.234 1.359 0.359 2.078 0.359 2.109 0 3.734-1.328 4.062-1.328 1.984 0 1.937 4.25 1.937 5.516zM28 4c0 2.203-1.797 4-4 4s-4-1.797-4-4 1.797-4 4-4 4 1.797 4 4z'],
+  uni:    ['0 0 36 28','M27.719 13.062l0.281 4.937c0.125 2.203-4.484 4-10 4s-10.125-1.797-10-4l0.281-4.937 8.969 2.828c0.25 0.078 0.5 0.109 0.75 0.109s0.5-0.031 0.75-0.109zM36 8c0 0.219-0.141 0.406-0.344 0.484l-17.5 5.5c-0.063 0.016-0.109 0.016-0.156 0.016s-0.094 0-0.156-0.016l-10.187-3.219c-0.891 0.703-1.516 2.422-1.641 4.531 0.594 0.344 0.984 0.969 0.984 1.703 0 0.703-0.359 1.313-0.906 1.672l0.906 6.766c0.016 0.141-0.031 0.281-0.125 0.391s-0.234 0.172-0.375 0.172h-3c-0.141 0-0.281-0.063-0.375-0.172s-0.141-0.25-0.125-0.391l0.906-6.766c-0.547-0.359-0.906-0.969-0.906-1.672 0-0.75 0.422-1.391 1.016-1.734 0.094-1.828 0.562-3.797 1.531-5.156l-5.203-1.625c-0.203-0.078-0.344-0.266-0.344-0.484s0.141-0.406 0.344-0.484l17.5-5.5c0.063-0.016 0.109-0.016 0.156-0.016s0.094 0 0.156 0.016l17.5 5.5c0.203 0.078 0.344 0.266 0.344 0.484z']
+};
+
+function svgIcon(key, size) {
+  var i = ICONS[key]; if (!i) return '';
+  size = size || 16;
+  return '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size +
+         '" viewBox="' + i[0] + '"><path d="' + i[1] + '"></path></svg>';
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ------------------------------------------------------------------ *
+ *  Χάρτης                                                             *
+ * ------------------------------------------------------------------ */
+var map, DATA, unitsLayer, homeBounds;
+
+function popupHtml(u) {
+  var h = '<div class="mypop altbutinfo">';
+
+  h += '<h3>' + (u.icon ? '<img src="' + esc(u.icon) + '" alt="">' : '') + esc(u.name) + '</h3>';
+
+  if (u.kind === 'office') {
+    h += '<div class="addr"><b>' + esc(u.info.title) + '</b>';
+    for (var k = 0; k < u.info.lines.length; k++) h += esc(u.info.lines[k]) + '<br>';
+    h += '</div>';
+  } else {
+    // ύψος ζώνης φωτογραφίας: αυτούσιο από το παλιό popup, αλλά ποτέ μικρότερο
+    // από το ύψος που χρειάζονται τα ίδια τα τμήματα (τα οποία επιπλέουν πάνω του)
+    var style = u.photo
+        ? ' style="background-image:url(' + esc(u.photo) + ');background-position:' +
+          esc(u.photo_focus || '50% 50%') + ';min-height:' + (u.photo_height || 180) + 'px;"'
+        : '';
+    h += '<div class="shots' + (u.photo ? '' : ' nophoto') + '"' + style + '>';
+    for (var i = 0; i < u.departments.length; i++) {
+      var d = u.departments[i];
+      h += '<h4>' + svgIcon('dept') + '<a target="_blank" rel="noopener" href="' + esc(d.url) + '">' + esc(d.name) + '</a></h4>';
+    }
+    h += '</div>';
+  }
+
+  if (u.links && u.links.length) {
+    h += '<div class="acts">';
+    for (var j = 0; j < u.links.length; j++) {
+      var l = u.links[j];
+      h += '<a class="button" target="_blank" rel="noopener" href="' + esc(l.url) + '">' + svgIcon(l.icon) + esc(l.label) + '&nbsp;</a> ';
+    }
+    h += '</div>';
+  }
+
+  if (u.photo_status && u.photo_status.indexOf('DEAD_404') === 0) {
+    h += '<div class="flag">Η αρχική φωτογραφία της καρτέλας δεν υπάρχει πλέον στο gallery (404).</div>';
+  }
+
+  return h + '</div>';
+}
+
+function AegeanUnits__mappieinitialize() {
+  // Σε επαναλαμβανόμενες κλήσεις (κουμπί επαναφοράς) — επαναφορά όψης.
+  // Κλείνουμε και τυχόν ανοιχτό popup: αλλιώς η καρτέλα ενός νησιού έμενε να
+  // αιωρείται πάνω από τον γενικό χάρτη, χωρίς πια να δείχνει στη φούσκα της.
+  if (map && homeBounds) { map.closePopup(); fitHome(); return; }
+  if (!DATA) return;
+
+  map = L.map('map-canvas', {
+    center: DATA.map.center,
+    zoom:   DATA.map.zoom,
+    scrollWheelZoom: true
+  });
+
+  // CartoDB Positron — minimal, light-grey tiles, no API key required
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  unitsLayer = L.featureGroup().addTo(map);
+
+  for (var i = 0; i < DATA.units.length; i++) {
+    var u = DATA.units[i];
+    var n = u.departments ? u.departments.length : 0;
+    var isOffice = (u.kind === 'office');
+
+    // bubble: ακτίνα ~ αριθμός μονάδων
+    var bubble = L.circleMarker(u.coords, {
+      radius:      isOffice ? 10 : (9 + 2.6 * n),
+      color:       '#ffffff',
+      weight:      2,
+      opacity:     1,
+      fillColor:   isOffice ? '#7a8fa0' : '#224D6F',
+      fillOpacity: 0.85
+    }).addTo(unitsLayer);
+
+    bubble.bindTooltip(
+      '<b>' + esc(u.name) + '</b><span>' + (isOffice ? 'διοικητικές υπηρεσίες' : n + (n === 1 ? ' τμήμα' : ' τμήματα')) + '</span>',
+      { permanent: true, direction: 'right', offset: [(isOffice ? 12 : 11 + 2.6 * n), 0], className: 'unit-label' }
+    );
+
+    addClicker(bubble, popupHtml(u), u.zoom_on_click || 10);
+  }
+
+  homeBounds = unitsLayer.getBounds();
+  fitHome();
+
+  // Αρχική/επαναφερόμενη όψη: όλα τα σημεία μέσα στο κάδρο, με χώρο για τη μπάρα.
+  // Το padding κλιμακώνεται με το μέγεθος του καμβά — αλλιώς σε στενή οθόνη
+  // (κινητό) το σταθερό padding «τρώει» τον χάρτη και το fitBounds ξεζουμάρει.
+  function fitHome() {
+    var size = map.getSize();
+    var pad  = DATA.map.fit_padding || [60, 60];
+    var px = Math.min(pad[0], Math.round(size.x * 0.08));
+    var py = Math.min(pad[1], Math.round(size.y * 0.06));
+    map.fitBounds(homeBounds, {
+      paddingTopLeft:     [px, py + 20],
+      paddingBottomRight: [px + Math.round(size.x * 0.05), py + 25]
+    });
+  }
+
+  // Συμπεριφορά κλικ: zoom + pan + popup — ένα closure ανά bubble
+  function addClicker(marker, details, zoomTo) {
+    // autoPan: false — το autoPan του Leaflet τρέχει τη στιγμή που ανοίγει η
+    // καρτέλα, δηλαδή ΠΡΙΝ το flyTo παρακάτω, οπότε ο υπολογισμός του ακυρώνεται
+    // ούτως ή άλλως. Το αναλαμβάνουμε εμείς στο moveend, με μέτρηση.
+    marker.bindPopup(details, { maxWidth: 320, autoPan: false });
+
+    // Το κουμπί κλεισίματος του Leaflet κάνει click χωρίς stopPropagation, οπότε
+    // το click διαρρέει στο marker και το popup ξανανοίγει αμέσως.
+    // Διόρθωση: μόλις ανοίξει το popup, σταματάμε τη διάδοση στο κουμπί.
+    marker.on('popupopen', function () {
+      var popup = marker.getPopup();
+      if (popup && popup._closeButton) {
+        L.DomEvent.on(popup._closeButton, 'click', L.DomEvent.stopPropagation);
+      }
+    });
+
+    marker.on('click', function () {
+      var CTRL_BAR_OFFSET = 80; // px — μετατοπίζει το σημείο κάτω από το κέντρο, καθαρίζοντας τη σταθερή μπάρα
+      var pt = map.project(marker.getLatLng(), zoomTo);
+      var adjusted = map.unproject(L.point(pt.x, pt.y - CTRL_BAR_OFFSET), zoomTo);
+
+      // Ψηλές καρτέλες (Λέσβος: 6 τμήματα + φωτογραφία) ξεπερνούσαν προς τα πάνω
+      // τη σταθερή μπάρα και το × κατέληγε από κάτω της, κυριολεκτικά άκλικτο.
+      // Μόλις ηρεμήσει η κίνηση μετράμε πού κάθεται η καρτέλα και, αν χρειάζεται,
+      // κατεβάζουμε την όψη όσο ακριβώς λείπει.
+      map.once('moveend', function () {
+        var popup = marker.getPopup();
+        if (!popup || !popup._container) { return; }
+        var bar = document.getElementById('AegeanUnits__map_control');
+        var obstructionBottom = Math.max(
+          document.querySelector('.map-content').getBoundingClientRect().bottom,
+          bar ? bar.getBoundingClientRect().bottom : 0
+        );
+        var missing = (obstructionBottom + 12) - popup._container.getBoundingClientRect().top;
+        if (missing > 0) { map.panBy([0, -missing], { animate: true, duration: 0.35 }); }
+      });
+
+      map.flyTo(adjusted, zoomTo);
+    });
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Φόρτωση δεδομένων                                                  *
+ *  1) fetch('map-data.json')  — η μία πηγή αλήθειας, όταν σερβίρεται  *
+ *     από http(s)://                                                  *
+ *  2) fallback σε map-data.js — γιατί το fetch() μπλοκάρεται από      *
+ *     CORS όταν η σελίδα ανοίγει από file:// (τοπική προεπισκόπηση).  *
+ *     Το map-data.js παράγεται από το JSON με το build-datajs.py.     *
+ * ------------------------------------------------------------------ */
+// Το ύψος της μπάρας αλλάζει με το πλάτος/τη γραμματοσειρά — το μετράμε αντί
+// να το μαντεύουμε, ώστε ο χάρτης να μην περνά ποτέ από κάτω της.
+function syncBarHeight() {
+  var bar = document.querySelector('.map-content');
+  var cv  = document.getElementById('map-canvas');
+  if (!bar || !cv) return;
+  cv.style.paddingTop = bar.offsetHeight + 'px';
+  if (map) { map.invalidateSize({ animate: false }); }
+}
+
+function boot(d) { DATA = d; syncBarHeight(); AegeanUnits__mappieinitialize(); syncBarHeight(); }
+
+var _rz;
+window.addEventListener('resize', function () {
+  clearTimeout(_rz);
+  _rz = setTimeout(function () { syncBarHeight(); if (map && homeBounds) { /* κρατάμε την τρέχουσα όψη */ } }, 150);
+});
+
+function loadFallback() {
+  var s = document.createElement('script');
+  s.src = 'map-data.js';
+  s.onload = function () {
+    if (window.MAP_DATA) { boot(window.MAP_DATA); }
+    else { document.getElementById('map-canvas').innerHTML =
+      '<p style="padding:80px 20px;font:14px Arial;color:#a00">Δεν φορτώθηκαν τα δεδομένα του χάρτη (map-data.json / map-data.js).</p>'; }
+  };
+  s.onerror = loadFallbackFailed;
+  document.head.appendChild(s);
+}
+function loadFallbackFailed() {
+  document.getElementById('map-canvas').innerHTML =
+    '<p style="padding:80px 20px;font:14px Arial;color:#a00">Δεν βρέθηκε το map-data.json. Δες το README.md.</p>';
+}
+
+window.addEventListener('load', function () {
+  if (location.protocol === 'file:') { loadFallback(); return; }
+  fetch('map-data.json', { cache: 'no-cache' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(boot)
+    .catch(loadFallback);
+});
+</script>
+</body>
+</html>
